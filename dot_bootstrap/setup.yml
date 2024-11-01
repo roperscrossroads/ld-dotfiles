@@ -19,58 +19,18 @@
           - git
           - htop
           - vim
-          - firefox
           - gh
-          - gnome-tweaks
           - gcc
-          - helm
-          - go-task
-          - ripgrep
-          - poetry
           - zsh
           - fzf
           - tmux
-          - ffmpeg-free
-          - zlib
-          - zlib-devel
           - make
           - patch
-          - bzip2
-          - bzip2-devel
-          - readline-devel
-          - sqlite
-          - sqlite-devel
-          - openssl-devel
-          - tk-devel
-          - libffi-devel
-          - xz-devel
-          - libuuid-devel
-          - gdbm-libs
-          - libnsl2
-          - luarocks
           - wl-clipboard
           - fd-find
-          - gcc-c++
-          - doctl
-          - helix
-          - "@Development Tools"
-          - "@C Development Tools and Libraries"
           - autoconf
-          - ncurses-devel
-          - wxGTK-devel
-          - wxBase
-          - java-1.8.0-openjdk-devel
-          - libiodbc
-          - unixODBC-devel.x86_64
-          - erlang-odbc.x86_64
-          - libxslt
-          - fop
           - podman-compose
           - inotify-tools
-          - blender
-          - toilet
-          - dotnet-sdk-8.0
-          - unar
         state: present
 
     - name: Change shell to zsh
@@ -151,18 +111,18 @@
         groups: docker
         append: true
 
-    - name: Add rtx config manager
+    - name: Add mise config manager
       ansible.builtin.yum_repository:
-        name: rtx
-        description: RTX Repo
-        baseurl: https://rtx.pub/rpm
-        gpgkey: https://rtx.pub/gpg-key.pub
+        name: mise
+        description: mise repo
+        baseurl: https://mise.jdx.dev/rpm/
+        gpgkey: https://mise.jdx.dev/gpg-key.pub
         gpgcheck: true
         enabled: true
 
-    - name: Install RTX
+    - name: Install mise
       ansible.builtin.dnf:
-        name: rtx
+        name: mise
         state: present
 
     - name: Add kubectl repo
@@ -215,36 +175,10 @@
         creates: /usr/local/bin/pulumi
       when: pulumi_installed is failed or pulumi_installed.stdout is not search(pulumi_version)
 
-    - name: Check if the targeted version of flyctl is installed
-      ansible.builtin.command: flyctl version
-      register: installed_flyctl_version
-      ignore_errors: true
-      changed_when: false
-
-    - name: Download flyctl tar.gz
-      ansible.builtin.get_url:
-        url: "https://github.com/superfly/flyctl/releases/download/v{{ flyctl_version }}/flyctl_{{ flyctl_version }}_Linux_x86_64.tar.gz"
-        dest: "/tmp/flyctl_{{ flyctl_version }}_Linux_x86_64.tar.gz"
-        mode: "0644"
-      when: flyctl_version not in installed_flyctl_version.stdout
-
-    - name: Extract flyctl to /usr/local/bin
-      ansible.builtin.unarchive:
-        src: "/tmp/flyctl_{{ flyctl_version }}_Linux_x86_64.tar.gz"
-        dest: "/usr/local/bin"
-        remote_src: true
-      when: flyctl_version not in installed_flyctl_version.stdout
-
     - name: Install Flatpak packages
       community.general.flatpak:
         name:
-          - com.obsproject.Studio
           - org.videolan.VLC
-          - org.tenacityaudio.Tenacity
-          - md.obsidian.Obsidian
-          - org.gimp.GIMP
-          - rest.insomnia.Insomnia
-          - com.github.johnfactotum.Foliate
           - org.gnome.meld
           - org.sqlitebrowser.sqlitebrowser
         state: present
