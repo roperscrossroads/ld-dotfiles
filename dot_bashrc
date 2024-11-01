@@ -25,3 +25,6 @@ fi
 unset rc
 . "$HOME/.cargo/env"
 eval "$(mise activate bash)"
+
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+eval "$(atuin init bash)"

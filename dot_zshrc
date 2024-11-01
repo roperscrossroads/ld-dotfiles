@@ -15,3 +15,7 @@ alias task=go-task
 alias v=nvim
 alias k=kubectl
 
+
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh)"
