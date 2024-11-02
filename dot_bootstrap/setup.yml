@@ -239,30 +239,31 @@
       become: true
       when: ansible_os_family in ["Debian", "Ubuntu"]
 
-    - name: Download and add Kubernetes GPG key
-      ansible.builtin.shell: >
-            wget -qO - https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | gpg --dearmor | tee /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-      become: true
-      when: ansible_os_family in ["Debian", "Ubuntu"]
+    # TODO: add this back later
+    # - name: Download and add Kubernetes GPG key
+    #   ansible.builtin.shell: >
+    #         wget -qO - https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | gpg --dearmor | tee /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    #   become: true
+    #   when: ansible_os_family in ["Debian", "Ubuntu"]
 
-    - name: Add kubectl repo on Debian/Ubuntu
-      ansible.builtin.apt_repository:
-            repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg arch=amd64] https://pkgs.k8s.io/core:/stable:/v1.30/deb stable main'
-            state: present
-      become: true
-      when: ansible_os_family in ["Debian", "Ubuntu"]
+    # - name: Add kubectl repo on Debian/Ubuntu
+    #   ansible.builtin.apt_repository:
+    #         repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg arch=amd64] https://pkgs.k8s.io/core:/stable:/v1.30/deb stable main'
+    #         state: present
+    #   become: true
+    #   when: ansible_os_family in ["Debian", "Ubuntu"]
 
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: yes
-      become: true
-      when: ansible_os_family in ["Debian", "Ubuntu"]
+    # - name: Update apt cache
+    #   ansible.builtin.apt:
+    #     update_cache: yes
+    #   become: true
+    #   when: ansible_os_family in ["Debian", "Ubuntu"]
 
-    - name: Install kubectl on Debian/Ubuntu
-      ansible.builtin.apt:
-        name: kubectl
-        state: present
-      when: ansible_os_family in ["Debian", "Ubuntu"]
+    # - name: Install kubectl on Debian/Ubuntu
+    #   ansible.builtin.apt:
+    #     name: kubectl
+    #     state: present
+    #   when: ansible_os_family in ["Debian", "Ubuntu"]
 
     - name: Add kubectl repo on Fedora
       ansible.builtin.yum_repository:
