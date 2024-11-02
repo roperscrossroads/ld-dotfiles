@@ -48,48 +48,48 @@
         state: present
       when: ansible_os_family == "RedHat"
 
-    - name: Add Brave Browser Repo on Debian/Ubuntu
-      ansible.builtin.apt_repository:
-        repo: 'deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main'
-        state: present
-        filename: 'brave-browser-release'
-      when: ansible_os_family == "Debian"
+    # - name: Add Brave Browser Repo on Debian/Ubuntu
+    #   ansible.builtin.apt_repository:
+    #     repo: 'deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main'
+    #     state: present
+    #     filename: 'brave-browser-release'
+    #   when: ansible_os_family == "Debian"
     
-    - name: Import Brave Browser GPG Key on Debian/Ubuntu
-      ansible.builtin.apt_repository:
-        repo: 'deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main'
-        state: present
-        filename: 'brave-browser-release'
-        key: https://brave-browser-apt-release.s3.brave.com/brave-core.asc
-      when: ansible_os_family == "Debian"
+    # - name: Import Brave Browser GPG Key on Debian/Ubuntu
+    #   ansible.builtin.apt_repository:
+    #     repo: 'deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main'
+    #     state: present
+    #     filename: 'brave-browser-release'
+    #     key: https://brave-browser-apt-release.s3.brave.com/brave-core.asc
+    #   when: ansible_os_family == "Debian"
     
-    - name: Install Brave Browser on Debian/Ubuntu
-      ansible.builtin.apt:
-        name: brave-browser
-        state: present
-      when: ansible_os_family == "Debian"
+    # - name: Install Brave Browser on Debian/Ubuntu
+    #   ansible.builtin.apt:
+    #     name: brave-browser
+    #     state: present
+    #   when: ansible_os_family == "Debian"
 
-    - name: Add Brave Browser Repo on Fedora
-      ansible.builtin.yum_repository:
-        name: brave-browser
-        description: Brave Browser
-        baseurl: https://brave-browser-rpm-release.s3.brave.com/x86_64/
-        gpgkey: https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-        gpgcheck: true
-        enabled: true
-      when: ansible_os_family == "RedHat"
+    # - name: Add Brave Browser Repo on Fedora
+    #   ansible.builtin.yum_repository:
+    #     name: brave-browser
+    #     description: Brave Browser
+    #     baseurl: https://brave-browser-rpm-release.s3.brave.com/x86_64/
+    #     gpgkey: https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+    #     gpgcheck: true
+    #     enabled: true
+    #   when: ansible_os_family == "RedHat"
 
-    - name: Import Brave Browser GPG Key on Fedora
-      ansible.builtin.rpm_key:
-        key: https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-        state: present
-      when: ansible_os_family == "RedHat"
+    # - name: Import Brave Browser GPG Key on Fedora
+    #   ansible.builtin.rpm_key:
+    #     key: https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+    #     state: present
+    #   when: ansible_os_family == "RedHat"
 
-    - name: Install Brave Browser on Fedora
-      ansible.builtin.dnf:
-        name: brave-browser
-        state: present
-      when: ansible_os_family == "RedHat"
+    # - name: Install Brave Browser on Fedora
+    #   ansible.builtin.dnf:
+    #     name: brave-browser
+    #     state: present
+    #   when: ansible_os_family == "RedHat"
 
     - name: Import Microsoft GPG Key on Debian/Ubuntu
       ansible.builtin.apt_key:
