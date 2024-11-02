@@ -214,7 +214,7 @@
       become: true    
     
     - name: Download and add GPG key
-      ansible.builtin.command: >
+      ansible.builtin.shell: >
             wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | tee /etc/apt/keyrings/mise-archive-keyring.gpg
       become: true
       when: ansible_os_family in ["Debian", "Ubuntu"]
