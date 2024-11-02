@@ -20,7 +20,6 @@
           - curl
           - fd-find
           - flatpak
-          - fzf
           - gpg
           - gh
           - gcc
