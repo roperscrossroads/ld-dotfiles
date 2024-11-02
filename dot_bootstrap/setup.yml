@@ -132,10 +132,10 @@
     - name: Determine the correct Docker repository URL
       set_fact:
         docker_repo: >
-          {% if ansible_distribution == "Ubuntu" %}
-            "https://download.docker.com/linux/ubuntu/dists/{{ ansible_distribution_release }}/stable/binary-{{ ansible_architecture }}/"
-          {% elif ansible_distribution == "Debian" %}
-            "https://download.docker.com/linux/debian/dists/{{ ansible_distribution_release }}/stable/binary-{{ ansible_architecture }}/"
+          {% if ansible_distribution | lower == "ubuntu" %}
+            https://download.docker.com/linux/ubuntu/dists/{{ ansible_distribution_release | lower }}/stable/binary-{{ ansible_architecture | lower }}/
+          {% elif ansible_distribution | lower == "debian" %}
+            https://download.docker.com/linux/debian/dists/{{ ansible_distribution_release | lower }}/stable/binary-{{ ansible_architecture | lower }}/
           {% else %}
             ""
           {% endif %}
