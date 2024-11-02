@@ -246,8 +246,9 @@
       when: ansible_os_family in ["Debian", "Ubuntu"]
 
     - name: Add kubectl repo on Debian/Ubuntu
-      ansible.builtin.command: >
-            echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
+      ansible.builtin.apt_repository:
+            repo: 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg arch=amd64] https://pkgs.k8s.io/core:/stable:/v1.30/deb stable main'
+            state: present
       become: true
       when: ansible_os_family in ["Debian", "Ubuntu"]
 
