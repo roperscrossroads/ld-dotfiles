@@ -1,4 +1,10 @@
 #!/bin/bash
 
-# .config/gnome-terminal-profiles.dconf hash: {{ include "dot_config/gnome-terminal-profiles.dconf" | sha256sum }}
-dconf load /org/gnome/terminal/legacy/profiles:/ < {{ joinPath .chezmoi.sourceDir "dot_config/gnome-terminal-profiles.dconf" | quote }}
+# Check if dconf is installed
+if command -v dconf >/dev/null 2>&1; then
+    # Load the dconf settings
+    dconf load /org/gnome/terminal/legacy/profiles:/ < {{ joinPath .chezmoi.sourceDir "dot_config/gnome-terminal-profiles.dconf" | quote }}
+else
+    echo "dconf is not installed. Skipping dconf load."
+    exit 0
+fi
