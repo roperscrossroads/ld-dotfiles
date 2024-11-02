@@ -240,7 +240,7 @@
       when: ansible_os_family in ["Debian", "Ubuntu"]
 
     - name: Download and add Kubernetes GPG key
-      ansible.builtin.command: >
+      ansible.builtin.shell: >
             curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
       become: true
       when: ansible_os_family in ["Debian", "Ubuntu"]
