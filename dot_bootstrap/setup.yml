@@ -16,21 +16,26 @@
     - name: Install packages
       ansible.builtin.package:
         name:
-          - git
-          - htop
-          - vim
+          - autoconf
+          - curl
+          - fd-find
+          - flatpak
+          - fzf
+          - gpg
           - gh
           - gcc
-          - zsh
-          - fzf
-          - tmux
+          - git
+          - htop
+          - inotify-tools
           - make
           - patch
-          - wl-clipboard
-          - fd-find
-          - autoconf
           - podman-compose
-          - inotify-tools
+          - tmux
+          - unzip
+          - vim
+          - wget
+          - wl-clipboard
+          - zsh
         state: present
 
 #    - name: Change shell to zsh
@@ -170,20 +175,53 @@
         append: true
 
     - name: Add mise config manager on Fedora
-      ansible.builtin.yum_repository:
-        name: mise
-        description: mise repo
-        baseurl: https://mise.jdx.dev/rpm/
-        gpgkey: https://mise.jdx.dev/gpg-key.pub
-        gpgcheck: true
-        enabled: true
+      ansible.builtin.command: >
+        dnf config-manager --add-repo https://mise.jdx.dev/rpm/mise.repo
       when: ansible_os_family == "RedHat"
+      register: add_repo
+      ignore_errors: true
 
     - name: Install mise on Fedora
       ansible.builtin.dnf:
         name: mise
         state: present
-      when: ansible_os_family == "RedHat"
+      when: add_repo is succeeded and ansible_os_family == "RedHat"
+
+    - name: Create keyrings directory
+      ansible.builtin.file:
+            path: /etc/apt/keyrings
+            state: directory
+            mode: '0755'
+      become: true
+      when: ansible_os_family in ["Debian", "Ubuntu"]
+
+    - name: Download and add GPG key
+      ansible.builtin.command: >
+            wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | tee /etc/apt/keyrings/mise-archive-keyring.gpg
+      become: true
+      args:
+            warn: false  # Suppress warnings for this command
+      when: ansible_os_family in ["Debian", "Ubuntu"]
+
+    - name: Add mise repository to sources list
+      ansible.builtin.apt_repository:
+            repo: 'deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main'
+            state: present
+      become: true
+      when: ansible_os_family in ["Debian", "Ubuntu"]
+
+    - name: Update package index
+      ansible.builtin.apt:
+            update_cache: yes
+      become: true
+      when: ansible_os_family in ["Debian", "Ubuntu"]
+
+    - name: Install mise
+      ansible.builtin.apt:
+            name: mise
+            state: present
+      become: true
+      when: ansible_os_family in ["Debian", "Ubuntu"]
 
     - name: Add kubectl repo on Debian/Ubuntu
       ansible.builtin.apt_repository:
@@ -264,6 +302,12 @@
         extra_opts: [--strip-components=1]
         creates: /usr/local/bin/pulumi
       when: pulumi_installed is failed or pulumi_installed.stdout is not search(pulumi_version)
+
+    - name: Add Flathub remote
+      community.general.flatpak_remote:
+        name: flathub
+        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+        state: present
 
     - name: Install Flatpak packages
       community.general.flatpak:
