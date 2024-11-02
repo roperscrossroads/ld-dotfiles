@@ -241,7 +241,7 @@
 
     - name: Download and add Kubernetes GPG key
       ansible.builtin.shell: >
-            curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+            wget -qO - https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | gpg --dearmor | tee /etc/apt/keyrings/kubernetes-apt-keyring.gpg
       become: true
       when: ansible_os_family in ["Debian", "Ubuntu"]
 
@@ -280,18 +280,19 @@
         state: present
       when: ansible_os_family == "RedHat"
 
-    - name: Add Hashicorp Repo on Debian/Ubuntu
-      ansible.builtin.apt_repository:
-        repo: 'deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main'
-        state: present
-        filename: 'hashicorp'
-      when: ansible_os_family == "Debian"
+    # TODO: add this back later
+    # - name: Add Hashicorp Repo on Debian/Ubuntu
+    #   ansible.builtin.apt_repository:
+    #     repo: 'deb [arch=amd64] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main'
+    #     state: present
+    #     filename: 'hashicorp'
+    #   when: ansible_os_family == "Debian"
 
-    - name: Install Terraform on Debian/Ubuntu
-      ansible.builtin.apt:
-        name: terraform
-        state: present
-      when: ansible_os_family == "Debian"
+    # - name: Install Terraform on Debian/Ubuntu
+    #   ansible.builtin.apt:
+    #     name: terraform
+    #     state: present
+    #   when: ansible_os_family == "Debian"
 
     - name: Add Hashicorp Repo on Fedora
       ansible.builtin.yum_repository:
