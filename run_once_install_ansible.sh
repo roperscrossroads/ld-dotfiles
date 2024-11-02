@@ -18,19 +18,34 @@ install_on_mac() {
     brew install ansible
 }
 
+detect_os() {
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        case "$ID" in
+            fedora)
+                install_on_fedora
+                ;;
+            ubuntu)
+                install_on_ubuntu
+                ;;
+            debian)
+                install_on_debian
+                ;;
+            *)
+                echo "Unsupported Linux distribution: $ID"
+                exit 1
+                ;;
+        esac
+    else
+        echo "Unable to detect operating system."
+        exit 1
+    fi
+}
+
 OS="$(uname -s)"
 case "${OS}" in
     Linux*)
-        if [ -f /etc/fedora-release ]; then
-            install_on_fedora
-        elif [ -f /etc/debian_version ]; then
-            install_on_debian            
-        elif [ -f /etc/lsb-release ]; then
-            install_on_ubuntu
-        else
-            echo "Unsupported Linux distribution"
-            exit 1
-        fi
+        detect_os
         ;;
     Darwin*)
         install_on_mac
@@ -41,8 +56,7 @@ case "${OS}" in
         ;;
 esac
 
-
+# Run the Ansible playbook
 ansible-playbook ~/.bootstrap/setup.yml --ask-become-pass
 
 echo "Ansible installation complete."
-
