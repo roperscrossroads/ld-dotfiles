@@ -126,12 +126,23 @@
         state: present
       when: ansible_os_family == "RedHat"
 
+    - name: Determine the correct Docker repository URL
+      set_fact:
+        docker_repo: >
+          {% if ansible_os_family == "Debian" %}
+            "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+          {% elif ansible_os_family == "Ubuntu" %}
+            "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+          {% else %}
+            ""
+          {% endif %}
+
     - name: Add Docker repo on Debian/Ubuntu
       ansible.builtin.apt_repository:
-        repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable'
+        repo: "{{ docker_repo }}"
         state: present
         filename: 'docker'
-      when: ansible_os_family == "Debian"
+      when: docker_repo != ""
 
     - name: Install Docker on Debian/Ubuntu
       ansible.builtin.apt:
@@ -141,7 +152,7 @@
           - containerd.io
           - docker-compose-plugin
         state: present
-      when: ansible_os_family == "Debian"
+      when: docker_repo != ""
 
     - name: Add Docker repo on Fedora
       ansible.builtin.yum_repository:
