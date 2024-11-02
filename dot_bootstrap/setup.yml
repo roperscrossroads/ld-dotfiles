@@ -55,13 +55,15 @@
         state: present
         filename: 'brave-browser-release'
       when: ansible_os_family == "Debian"
-
+    
     - name: Import Brave Browser GPG Key on Debian/Ubuntu
-      ansible.builtin.apt_key:
-        url: https://brave-browser-apt-release.s3.brave.com/brave-core.asc
+      ansible.builtin.apt_repository:
+        repo: 'deb [arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main'
         state: present
+        filename: 'brave-browser-release'
+        key: https://brave-browser-apt-release.s3.brave.com/brave-core.asc
       when: ansible_os_family == "Debian"
-
+    
     - name: Install Brave Browser on Debian/Ubuntu
       ansible.builtin.apt:
         name: brave-browser
