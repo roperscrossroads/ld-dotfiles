@@ -126,41 +126,40 @@
         state: present
       when: ansible_os_family == "RedHat"
 
-# Some valid Docker repository URLs including the architecture:
-# https://download.docker.com/linux/ubuntu/dists/jammy/stable/binary-amd64/
-# https://download.docker.com/linux/debian/dists/bookworm/stable/binary-amd64/
-    - name: Determine the correct Docker repository URL
-      set_fact:
-        docker_repo: >
-          {% if ansible_distribution | lower == "ubuntu" %}
-            https://download.docker.com/linux/ubuntu/dists/{{ ansible_distribution_release | lower }}/stable/
-          {% elif ansible_distribution | lower == "debian" %}
-            https://download.docker.com/linux/debian/dists/{{ ansible_distribution_release | lower }}/stable/
-          {% else %}
-            ""
-          {% endif %}
-      when: ansible_os_family in ["Debian", "Ubuntu"]
+    # TODO: fix urls for ubuntu / debian...
 
-    - name: Debug the Docker repository URL
-      debug:
-        msg: "Docker repository URL: {{ docker_repo }}"
+    # - name: Determine the correct Docker repository URL
+    #   set_fact:
+    #     docker_repo: >
+    #       {% if ansible_distribution | lower == "ubuntu" %}
+    #         https://download.docker.com/linux/ubuntu/dists/{{ ansible_distribution_release | lower }}/stable/
+    #       {% elif ansible_distribution | lower == "debian" %}
+    #         https://download.docker.com/linux/debian/dists/{{ ansible_distribution_release | lower }}/stable/
+    #       {% else %}
+    #         ""
+    #       {% endif %}
+    #   when: ansible_os_family in ["Debian", "Ubuntu"]
 
-    - name: Add Docker repo on Debian/Ubuntu
-      ansible.builtin.apt_repository:
-        repo: "{{ docker_repo }}"
-        state: present
-        filename: 'docker'
-      when: docker_repo != "" and ansible_os_family in ["Debian", "Ubuntu"]
+    # - name: Debug the Docker repository URL
+    #   debug:
+    #     msg: "Docker repository URL: {{ docker_repo }}"
 
-    - name: Install Docker on Debian/Ubuntu
-      ansible.builtin.apt:
-        name:
-          - docker-ce
-          - docker-ce-cli
-          - containerd.io
-          - docker-compose-plugin
-        state: present
-      when: docker_repo != "" and ansible_os_family in ["Debian", "Ubuntu"]
+    # - name: Add Docker repo on Debian/Ubuntu
+    #   ansible.builtin.apt_repository:
+    #     repo: "{{ docker_repo }}"
+    #     state: present
+    #     filename: 'docker'
+    #   when: docker_repo != "" and ansible_os_family in ["Debian", "Ubuntu"]
+
+    # - name: Install Docker on Debian/Ubuntu
+    #   ansible.builtin.apt:
+    #     name:
+    #       - docker-ce
+    #       - docker-ce-cli
+    #       - containerd.io
+    #       - docker-compose-plugin
+    #     state: present
+    #   when: docker_repo != "" and ansible_os_family in ["Debian", "Ubuntu"]
 
     - name: Add Docker repo on Fedora
       ansible.builtin.yum_repository:
