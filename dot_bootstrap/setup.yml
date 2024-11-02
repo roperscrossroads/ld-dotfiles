@@ -211,15 +211,44 @@
             path: /etc/apt/keyrings
             state: directory
             mode: '0755'
-      become: true
+      become: true    - name: Determine the correct Docker repository URL
+      set_fact:
+        docker_repo: >
+          {% if ansible_distribution | lower == "ubuntu" %}
+            https://download.docker.com/linux/ubuntu/dists/{{ ansible_distribution_release | lower }}/stable/
+          {% elif ansible_distribution | lower == "debian" %}
+            https://download.docker.com/linux/debian/dists/{{ ansible_distribution_release | lower }}/stable/
+          {% else %}
+            ""
+          {% endif %}
       when: ansible_os_family in ["Debian", "Ubuntu"]
+
+    - name: Debug the Docker repository URL
+      debug:
+        msg: "Docker repository URL: {{ docker_repo }}"
+
+    - name: Add Docker repo on Debian/Ubuntu
+      ansible.builtin.apt_repository:
+        repo: "{{ docker_repo }}"
+        state: present
+        filename: 'docker'
+      when: docker_repo != "" and ansible_os_family in ["Debian", "Ubuntu"]
+
+    - name: Install Docker on Debian/Ubuntu
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+      when: docker_repo != "" and ansible_os_family in ["Debian", "Ubuntu"]
+
 
     - name: Download and add GPG key
       ansible.builtin.command: >
             wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | tee /etc/apt/keyrings/mise-archive-keyring.gpg
       become: true
-      args:
-            warn: false  # Suppress warnings for this command
       when: ansible_os_family in ["Debian", "Ubuntu"]
 
     - name: Add mise repository to sources list
